@@ -1,11 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Upload, X, FileText, CheckCircle, Loader2 } from 'lucide-react';
 import { BentoCard } from '../components/BentoCard';
 import { supabase } from '../lib/supabaseClient';
 
 export const UploadPage: React.FC = () => {
     const [dragActive, setDragActive] = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | null>(null);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -151,7 +150,7 @@ export const UploadPage: React.FC = () => {
                     </div>
 
                     <BentoCard
-                        className={`border-2 border-dashed flex flex-col items-center justify-center p-8 transition-colors ${dragActive ? "border-accent-blue bg-accent-blue/5" : "border-neutral-800"
+                        className={`relative border-2 border-dashed flex flex-col items-center justify-center p-8 transition-colors ${dragActive ? "border-accent-blue bg-accent-blue/5" : "border-neutral-800"
                             }`}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
@@ -159,39 +158,42 @@ export const UploadPage: React.FC = () => {
                         onDrop={handleDrop}
                     >
                         {!file ? (
-                            <div
-                                className="w-full h-full flex flex-col items-center justify-center text-center group cursor-pointer"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                <div className="bg-neutral-800 p-4 rounded-2xl mb-4 inline-block group-hover:bg-accent-blue/20 group-hover:text-accent-blue transition-colors">
-                                    <Upload size={32} />
-                                </div>
-                                <p className="font-medium mb-1">Click to upload or drag and drop</p>
-                                <p className="text-xs text-neutral-500">PDF, PPT, DOCX, ZIP up to 50MB</p>
+                            <>
                                 <input
-                                    id="file-upload"
                                     type="file"
-                                    ref={fileInputRef}
-                                    className="hidden"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                     onChange={(e) => {
-                                        console.log('File selection detected');
+                                        console.log('File picked:', e.target.files?.[0]?.name);
                                         if (e.target.files && e.target.files[0]) {
                                             setFile(e.target.files[0]);
                                         }
                                     }}
                                 />
-                            </div>
+                                <div className="text-center group flex flex-col items-center">
+                                    <div className="bg-neutral-800 p-4 rounded-2xl mb-4 inline-block group-hover:bg-accent-blue/20 group-hover:text-accent-blue transition-colors">
+                                        <Upload size={32} />
+                                    </div>
+                                    <p className="font-medium mb-1">Click to upload or drag and drop</p>
+                                    <p className="text-xs text-neutral-500">PDF, PPT, DOCX, ZIP up to 50MB</p>
+                                </div>
+                            </>
                         ) : (
-                            <div className="w-full">
+                            <div className="w-full z-20">
                                 <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-xl">
                                     <div className="flex items-center gap-3">
                                         <FileText className="text-accent-blue" />
                                         <div className="text-left">
-                                            <p className="text-sm font-medium truncate max-w-[150px]">{file.name}</p>
-                                            <p className="text-[10px] text-neutral-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                            <p className="text-sm font-medium truncate max-w-[150px]">{file?.name}</p>
+                                            <p className="text-[10px] text-neutral-500">
+                                                {file ? (file.size / 1024 / 1024).toFixed(2) : "0"} MB
+                                            </p>
                                         </div>
                                     </div>
-                                    <button onClick={() => setFile(null)} className="p-1 hover:bg-neutral-700 rounded text-neutral-400">
+                                    <button
+                                        type="button"
+                                        onClick={() => setFile(null)}
+                                        className="p-1 hover:bg-neutral-700 rounded text-neutral-400 cursor-pointer relative z-30"
+                                    >
                                         <X size={16} />
                                     </button>
                                 </div>
