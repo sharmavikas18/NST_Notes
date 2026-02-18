@@ -1,11 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Upload, X, FileText, CheckCircle, Loader2 } from 'lucide-react';
 import { BentoCard } from '../components/BentoCard';
 import { supabase } from '../lib/supabaseClient';
 
 export const UploadPage: React.FC = () => {
     const [dragActive, setDragActive] = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | null>(null);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -79,7 +78,8 @@ export const UploadPage: React.FC = () => {
             setDescription('');
             setTimeout(() => setSuccess(false), 5000);
         } catch (err: any) {
-            alert(err.message);
+            console.error('Upload error detail:', err);
+            alert(err.message + (err.details ? ': ' + err.details : ''));
         } finally {
             setLoading(false);
         }
@@ -158,10 +158,7 @@ export const UploadPage: React.FC = () => {
                         onDrop={handleDrop}
                     >
                         {!file ? (
-                            <div
-                                className="text-center group cursor-pointer"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
+                            <label className="w-full h-full flex flex-col items-center justify-center text-center group cursor-pointer">
                                 <div className="bg-neutral-800 p-4 rounded-2xl mb-4 inline-block group-hover:bg-accent-blue/20 group-hover:text-accent-blue transition-colors">
                                     <Upload size={32} />
                                 </div>
@@ -169,11 +166,15 @@ export const UploadPage: React.FC = () => {
                                 <p className="text-xs text-neutral-500">PDF, PPT, DOCX, ZIP up to 50MB</p>
                                 <input
                                     type="file"
-                                    ref={fileInputRef}
                                     className="hidden"
-                                    onChange={(e) => e.target.files && setFile(e.target.files[0])}
+                                    onChange={(e) => {
+                                        console.log('File input changed:', e.target.files?.[0]);
+                                        if (e.target.files && e.target.files[0]) {
+                                            setFile(e.target.files[0]);
+                                        }
+                                    }}
                                 />
-                            </div>
+                            </label>
                         ) : (
                             <div className="w-full">
                                 <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-xl">
