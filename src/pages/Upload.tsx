@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Upload, X, FileText, CheckCircle, Loader2 } from 'lucide-react';
 import { BentoCard } from '../components/BentoCard';
 import { supabase } from '../lib/supabaseClient';
 
 export const UploadPage: React.FC = () => {
     const [dragActive, setDragActive] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | null>(null);
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -158,23 +159,28 @@ export const UploadPage: React.FC = () => {
                         onDrop={handleDrop}
                     >
                         {!file ? (
-                            <label className="w-full h-full flex flex-col items-center justify-center text-center group cursor-pointer">
+                            <div
+                                className="w-full h-full flex flex-col items-center justify-center text-center group cursor-pointer"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
                                 <div className="bg-neutral-800 p-4 rounded-2xl mb-4 inline-block group-hover:bg-accent-blue/20 group-hover:text-accent-blue transition-colors">
                                     <Upload size={32} />
                                 </div>
                                 <p className="font-medium mb-1">Click to upload or drag and drop</p>
                                 <p className="text-xs text-neutral-500">PDF, PPT, DOCX, ZIP up to 50MB</p>
                                 <input
+                                    id="file-upload"
                                     type="file"
+                                    ref={fileInputRef}
                                     className="hidden"
                                     onChange={(e) => {
-                                        console.log('File input changed:', e.target.files?.[0]);
+                                        console.log('File selection detected');
                                         if (e.target.files && e.target.files[0]) {
                                             setFile(e.target.files[0]);
                                         }
                                     }}
                                 />
-                            </label>
+                            </div>
                         ) : (
                             <div className="w-full">
                                 <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-xl">
