@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-background text-white antialiased min-h-screen font-sans;
+}
+
+/* Custom Bento Card styles */
+.bento-card {
+  @apply bg-card border border-neutral-800 rounded-3xl p-6 transition-all duration-300 hover:border-neutral-700;
+}
