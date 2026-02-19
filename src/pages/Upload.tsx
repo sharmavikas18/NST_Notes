@@ -158,10 +158,11 @@ export const UploadPage: React.FC = () => {
                         onDrop={handleDrop}
                     >
                         {!file ? (
-                            <>
+                            <div className="relative w-full h-full min-h-[200px] flex items-center justify-center">
                                 <input
+                                    id="notes-upload-input"
                                     type="file"
-                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    className="hidden"
                                     onChange={(e) => {
                                         console.log('File picked:', e.target.files?.[0]?.name);
                                         if (e.target.files && e.target.files[0]) {
@@ -169,14 +170,19 @@ export const UploadPage: React.FC = () => {
                                         }
                                     }}
                                 />
-                                <div className="text-center group flex flex-col items-center">
+                                <label
+                                    htmlFor="notes-upload-input"
+                                    className="absolute inset-0 cursor-pointer z-20"
+                                    aria-label="Upload document"
+                                />
+                                <div className="text-center group flex flex-col items-center pointer-events-none z-10">
                                     <div className="bg-neutral-800 p-4 rounded-2xl mb-4 inline-block group-hover:bg-accent-blue/20 group-hover:text-accent-blue transition-colors">
                                         <Upload size={32} />
                                     </div>
-                                    <p className="font-medium mb-1">Click to upload or drag and drop</p>
+                                    <p className="font-medium mb-1 text-white">Click to upload or drag and drop</p>
                                     <p className="text-xs text-neutral-500">PDF, PPT, DOCX, ZIP up to 50MB</p>
                                 </div>
-                            </>
+                            </div>
                         ) : (
                             <div className="w-full z-20">
                                 <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-xl">
